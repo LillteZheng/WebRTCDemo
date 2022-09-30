@@ -13,15 +13,16 @@
         android:text="开始本地传输"
         />
     <org.webrtc.SurfaceViewRenderer
-        android:id="@+id/frontView"
+        android:id="@+id/localRender"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"/>
+
     <org.webrtc.SurfaceViewRenderer
-        android:id="@+id/backView"
+        android:id="@+id/remoteRender"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="5dp"
         android:layout_weight="1"/>
 
 

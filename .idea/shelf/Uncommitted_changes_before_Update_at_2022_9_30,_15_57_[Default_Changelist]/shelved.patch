@@ -1,0 +1,458 @@
+Index: app/src/main/res/layout/activity_peer_local.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\n<androidx.appcompat.widget.LinearLayoutCompat xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\n    xmlns:tools=\"http://schemas.android.com/tools\"\n    android:layout_width=\"match_parent\"\n    android:layout_height=\"match_parent\"\n    android:orientation=\"vertical\"\n    >\n    <Button\n        android:layout_width=\"match_parent\"\n        android:layout_height=\"wrap_content\"\n        android:onClick=\"trans\"\n        android:text=\"开始本地传输\"\n        />\n    <org.webrtc.SurfaceViewRenderer\n        android:id=\"@+id/frontView\"\n        android:layout_width=\"match_parent\"\n        android:layout_height=\"0dp\"\n        android:layout_weight=\"1\"/>\n    <org.webrtc.SurfaceViewRenderer\n        android:id=\"@+id/backView\"\n        android:layout_width=\"match_parent\"\n        android:layout_height=\"0dp\"\n        android:layout_marginTop=\"2dp\"\n        android:layout_weight=\"1\"/>\n\n\n</androidx.appcompat.widget.LinearLayoutCompat>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_peer_local.xml b/app/src/main/res/layout/activity_peer_local.xml
+--- a/app/src/main/res/layout/activity_peer_local.xml	(revision 75127f0edb60ee3ec433fda209737b2801ae9e07)
++++ b/app/src/main/res/layout/activity_peer_local.xml	(date 1664503057192)
+@@ -13,15 +13,16 @@
+         android:text="开始本地传输"
+         />
+     <org.webrtc.SurfaceViewRenderer
+-        android:id="@+id/frontView"
++        android:id="@+id/localRender"
+         android:layout_width="match_parent"
+         android:layout_height="0dp"
+         android:layout_weight="1"/>
++
+     <org.webrtc.SurfaceViewRenderer
+-        android:id="@+id/backView"
++        android:id="@+id/remoteRender"
+         android:layout_width="match_parent"
+         android:layout_height="0dp"
+-        android:layout_marginTop="2dp"
++        android:layout_marginTop="5dp"
+         android:layout_weight="1"/>
+ 
+ 
+Index: app/src/main/java/com/zhengsr/webrtcdemo/CameraActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/zhengsr/webrtcdemo/CameraActivity.kt b/app/src/main/java/com/zhengsr/webrtcdemo/activity/CameraActivity.kt
+rename from app/src/main/java/com/zhengsr/webrtcdemo/CameraActivity.kt
+rename to app/src/main/java/com/zhengsr/webrtcdemo/activity/CameraActivity.kt
+--- a/app/src/main/java/com/zhengsr/webrtcdemo/CameraActivity.kt	(revision 75127f0edb60ee3ec433fda209737b2801ae9e07)
++++ b/app/src/main/java/com/zhengsr/webrtcdemo/activity/CameraActivity.kt	(date 1664501633607)
+@@ -1,9 +1,10 @@
+-package com.zhengsr.webrtcdemo
++package com.zhengsr.webrtcdemo.activity
+ 
+ import android.os.Bundle
+ import android.util.Log
+ import android.view.SurfaceHolder
+ import androidx.appcompat.app.AppCompatActivity
++import com.zhengsr.webrtcdemo.R
+ import kotlinx.android.synthetic.main.activity_camera.*
+ import org.webrtc.*
+ 
+@@ -58,7 +59,7 @@
+ 
+                     //添加视频轨道
+                     val videoTrack =
+-                        peerConnectionFactory.createVideoTrack(AUDIO_TRACK_ID, videoSource)
++                        peerConnectionFactory.createVideoTrack(VIDEO_TRACK_ID, videoSource)
+ 
+                     // 添加渲染接收端器到轨道中，画面开始呈现
+                     videoTrack.addSink(viewRender)
+Index: app/src/main/java/com/zhengsr/webrtcdemo/MainActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.zhengsr.webrtcdemo\n\nimport android.content.Intent\nimport android.os.Bundle\nimport android.util.Log\nimport android.view.View\nimport androidx.appcompat.app.AppCompatActivity\nimport androidx.core.app.ActivityCompat\nimport io.socket.client.IO\nimport io.socket.client.Socket\nimport io.socket.emitter.Emitter\nimport okhttp3.OkHttpClient\nimport org.json.JSONException\nimport org.json.JSONObject\nimport java.security.KeyManagementException\nimport java.security.NoSuchAlgorithmException\nimport java.security.cert.CertificateException\nimport java.security.cert.X509Certificate\nimport javax.net.ssl.HostnameVerifier\nimport javax.net.ssl.SSLContext\nimport javax.net.ssl.TrustManager\nimport javax.net.ssl.X509TrustManager\n\n\nclass MainActivity : AppCompatActivity() {\n    private  val TAG = \"MainActivity\"\n    private lateinit var socket: Socket\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n        setContentView(R.layout.activity_main)\n    }\n\n    fun camera(view: View) {\n        startActivity(Intent(this,CameraActivity::class.java))\n    }\n\n    fun peercamera(view: View) {\n        //startActivity(Intent(this,PeerLocalActivity::class.java))\n    }\n\n\n\n\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/zhengsr/webrtcdemo/MainActivity.kt b/app/src/main/java/com/zhengsr/webrtcdemo/MainActivity.kt
+--- a/app/src/main/java/com/zhengsr/webrtcdemo/MainActivity.kt	(revision 75127f0edb60ee3ec433fda209737b2801ae9e07)
++++ b/app/src/main/java/com/zhengsr/webrtcdemo/MainActivity.kt	(date 1664502682485)
+@@ -6,6 +6,8 @@
+ import android.view.View
+ import androidx.appcompat.app.AppCompatActivity
+ import androidx.core.app.ActivityCompat
++import com.zhengsr.webrtcdemo.activity.CameraActivity
++import com.zhengsr.webrtcdemo.activity.PeerLocalActivity
+ import io.socket.client.IO
+ import io.socket.client.Socket
+ import io.socket.emitter.Emitter
+@@ -31,11 +33,11 @@
+     }
+ 
+     fun camera(view: View) {
+-        startActivity(Intent(this,CameraActivity::class.java))
++        startActivity(Intent(this, CameraActivity::class.java))
+     }
+ 
+     fun peercamera(view: View) {
+-        //startActivity(Intent(this,PeerLocalActivity::class.java))
++        startActivity(Intent(this, PeerLocalActivity::class.java))
+     }
+ 
+ 
+Index: app/src/main/java/com/zhengsr/webrtcdemo/activity/PeerLocalActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/zhengsr/webrtcdemo/activity/PeerLocalActivity.kt b/app/src/main/java/com/zhengsr/webrtcdemo/activity/PeerLocalActivity.kt
+new file mode 100644
+--- /dev/null	(date 1664524394921)
++++ b/app/src/main/java/com/zhengsr/webrtcdemo/activity/PeerLocalActivity.kt	(date 1664524394921)
+@@ -0,0 +1,235 @@
++package com.zhengsr.webrtcdemo.activity
++
++import android.os.Bundle
++import android.util.Log
++import android.view.SurfaceHolder
++import android.view.View
++import androidx.appcompat.app.AppCompatActivity
++import com.zhengsr.webrtcdemo.PeerObserver
++import com.zhengsr.webrtcdemo.R
++import com.zhengsr.webrtcdemo.SdpObserver
++import kotlinx.android.synthetic.main.activity_peer_local.*
++import org.webrtc.*
++import org.webrtc.PeerConnection.IceServer
++
++
++/**
++ * @author by zhengshaorui 2022/9/30
++ * describe：
++ */
++private const val TAG = "PeerLocalActivity"
++class PeerLocalActivity : AppCompatActivity() {
++    val VIDEO_TRACK_ID = "ARDAMSv0"
++    val AUDIO_TRACK_ID = "ARDAMSa0"
++    private lateinit var peerConnectionFactory:PeerConnectionFactory
++    private lateinit var localMediaStream:MediaStream
++    override fun onCreate(savedInstanceState: Bundle?) {
++        super.onCreate(savedInstanceState)
++        setContentView(R.layout.activity_peer_local)
++
++        // step 1 创建PeerConnectionFactory,进行全局初始化和资源加载
++        PeerConnectionFactory.initialize(
++            PeerConnectionFactory.InitializationOptions.builder(this)
++                .setEnableInternalTracer(true)
++                .createInitializationOptions()
++        )
++        val eglBaseContext = EglBase.create().eglBaseContext
++        //创建编解码对象
++        val videoEncode = DefaultVideoEncoderFactory(eglBaseContext, true, true)
++        val videoDecode = DefaultVideoDecoderFactory(eglBaseContext)
++        val options = PeerConnectionFactory.Options()
++        //创建 peerConnectionFactory 对象
++        peerConnectionFactory =
++            PeerConnectionFactory.builder()
++                .setOptions(options)
++                .setVideoDecoderFactory(videoDecode)
++                .setVideoEncoderFactory(videoEncode)
++                .createPeerConnectionFactory()
++
++        // create AudioSource and AudioTrack
++        val audioSource = peerConnectionFactory.createAudioSource(MediaConstraints())
++        peerConnectionFactory.createAudioTrack(AUDIO_TRACK_ID, audioSource)
++
++        configLocalRender(eglBaseContext)
++
++        configRemoteRender(eglBaseContext)
++    }
++
++
++
++    /**
++     * 配置本地相机预览
++     */
++    fun configLocalRender(eglBaseContext:EglBase.Context){
++        localRender.holder.addCallback(object : SurfaceHolder.Callback {
++            override fun surfaceCreated(holder: SurfaceHolder) {
++                createCameraCapture()?.let { camera->
++                    val videoSource = peerConnectionFactory.createVideoSource(camera.isScreencast)
++                    Log.d(TAG, "surfaceCreated() called with: camera = $camera")
++                    //拿到 surface工具类，用来表示camera 初始化的线程
++                    val surfaceTextureHelper = SurfaceTextureHelper.create("caputerTHread", eglBaseContext)
++                    //用来表示当前初始化 camera 的线程，和 application context，当调用 startCapture 才会回调。
++                    camera.initialize(surfaceTextureHelper, application, videoSource.capturerObserver)
++                    //开始采集
++                    camera.startCapture(
++                        localRender.width,
++                        localRender.height,
++                        30
++                    )
++                    // 初始化 SurfaceViewRender ，这个方法非常重要，不初始化黑屏
++                    localRender.init(eglBaseContext,null)
++
++                    //添加视频轨道
++                    val videoTrack =
++                        peerConnectionFactory.createVideoTrack(VIDEO_TRACK_ID, videoSource)
++
++                    // 添加渲染接收端器到轨道中，画面开始呈现
++                    videoTrack.addSink(localRender)
++
++                    // 创建 mediastream
++                    localMediaStream = peerConnectionFactory.createLocalMediaStream("MediaStream")
++                    // 将视频轨添加到 mediastram 中，等待连接时传输
++                    localMediaStream.addTrack(videoTrack)
++                }
++
++            }
++
++            override fun surfaceChanged(
++                holder: SurfaceHolder,
++                format: Int,
++                width: Int,
++                height: Int
++            ) {
++            }
++
++            override fun surfaceDestroyed(holder: SurfaceHolder) {
++            }
++
++        })
++
++
++
++    }
++
++    /**
++     * 配置接收端的渲染surface
++     */
++    fun configRemoteRender(eglBaseContext:EglBase.Context){
++        remoteRender.holder.addCallback(object:SurfaceHolder.Callback{
++            override fun surfaceCreated(holder: SurfaceHolder) {
++                //等待接收数据，这里只要初始化即可
++                remoteRender.init(eglBaseContext,null)
++                remoteRender.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FIT)
++                remoteRender.setEnableHardwareScaler(false)
++            }
++
++            override fun surfaceChanged(
++                holder: SurfaceHolder,
++                format: Int,
++                width: Int,
++                height: Int
++            ) {
++            }
++
++            override fun surfaceDestroyed(holder: SurfaceHolder) {
++            }
++
++        })
++    }
++
++    fun trans(view: View) {
++        createPeerConnection()
++    }
++    private var localPeerConnection:PeerConnection? = null
++    private var remotePeerConnection:PeerConnection? = null
++    private fun createPeerConnection(){
++        val iceServers: List<IceServer> = ArrayList()
++        //内部会转成 RTCConfiguration
++        localPeerConnection = peerConnectionFactory.createPeerConnection(iceServers,object:PeerObserver(){
++            override fun onAddStream(strem: MediaStream?) {
++                super.onAddStream(strem)
++            }
++
++            override fun onIceCandidate(p0: IceCandidate?) {
++                super.onIceCandidate(p0)
++                //透传给另外一端
++                remotePeerConnection?.addIceCandidate(p0)
++
++            }
++        })
++        remotePeerConnection = peerConnectionFactory.createPeerConnection(iceServers,object :PeerObserver(){
++            override fun onAddStream(strem: MediaStream?) {
++                super.onAddStream(strem)
++                //拿到视频流，添加 sink ，SurfaceViewRender 会直接渲染
++                strem?.let {
++                    runOnUiThread {
++                        it.videoTracks[0].addSink(remoteRender)
++                    }
++                }
++            }
++
++            override fun onIceCandidate(p0: IceCandidate?) {
++                super.onIceCandidate(p0)
++                //透传给另外一端
++                localPeerConnection?.addIceCandidate(p0)
++
++            }
++        })
++
++        Log.d(TAG, "zsr createPeerConnection: "+localPeerConnection.hashCode()+" "+remotePeerConnection.hashCode())
++        localPeerConnection?.addStream(localMediaStream)
++        //客户端创建 offer
++        localPeerConnection?.createOffer(object:SdpObserver("创建local offer"){
++            override fun onCreateSuccess(p0: SessionDescription?) {
++                super.onCreateSuccess(p0)
++                Log.d(TAG, "创建 local offer success: ")
++                /**
++                 * 此时调用setLocalDescription()方法将该Offer保存到本地Local域，
++                 * 然后将Offer发送给对方
++                 */
++                localPeerConnection?.setLocalDescription(SdpObserver("local 设置本地 sdp"),p0)
++                //2. 同时，接收端 setRemoteDescription 把 offer 保存到远端域
++                remotePeerConnection?.setRemoteDescription(SdpObserver("把 sdp 给到 remote"),p0)
++
++                //3. 此时remote 已经接收端了 offer ,所以创建 answer
++                remotePeerConnection?.createAnswer(object:SdpObserver("创建 remote answer"){
++                    override fun onCreateSuccess(p0: SessionDescription?) {
++                        super.onCreateSuccess(p0)
++                        Log.d(TAG, " 创建 remote answer success: ")
++                        /**
++                         * 4. 此时调用setLocalDescription()方法将该 answer 保存到本地 remote 域，
++                         * 然后将 answer 发送给对方
++                         */
++                        remotePeerConnection?.setLocalDescription(SdpObserver("remote 设置本地 sdp"),p0)
++                        //5. local 把 answer 保存到它的 remote 端，此时 sdp 交换结束
++                        localPeerConnection?.setRemoteDescription(SdpObserver("把 sdp 给到 local"),p0)
++                    }
++
++                }, MediaConstraints())
++            }
++        }, MediaConstraints())
++
++
++    }
++
++    /**
++     * 或者 CameraCapture
++     */
++    private fun createCameraCapture(): VideoCapturer? {
++        val enumerator = Camera1Enumerator(false)
++        val deviceNames = enumerator.deviceNames
++        //使用后置摄像头
++        for (deviceName in deviceNames) {
++            if (enumerator.isBackFacing(deviceName)) {
++                val capturer = enumerator.createCapturer(deviceName, null)
++                if (capturer != null) {
++                    return capturer
++                }
++            }
++        }
++        return null
++
++    }
++
++
++}
+\ No newline at end of file
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    package=\"com.zhengsr.webrtcdemo\">\n\n    <uses-permission android:name=\"android.permission.CAMERA\" />\n    <uses-permission android:name=\"android.permission.RECORD_AUDIO\" />\n    <uses-permission android:name=\"android.permission.INTERNET\" />\n    <uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\"/>\n\n    <application\n        android:allowBackup=\"true\"\n        android:icon=\"@mipmap/ic_launcher\"\n        android:label=\"@string/app_name\"\n        android:roundIcon=\"@mipmap/ic_launcher_round\"\n        android:supportsRtl=\"true\"\n        android:theme=\"@style/Theme.WebRtcDemo\">\n        <activity\n            android:name=\".CameraActivity\"\n            android:exported=\"false\" />\n        <activity\n            android:name=\".MainActivity\"\n            android:exported=\"true\">\n            <intent-filter>\n                <action android:name=\"android.intent.action.MAIN\" />\n\n                <category android:name=\"android.intent.category.LAUNCHER\" />\n            </intent-filter>\n        </activity>\n    </application>\n\n</manifest>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml
+--- a/app/src/main/AndroidManifest.xml	(revision 75127f0edb60ee3ec433fda209737b2801ae9e07)
++++ b/app/src/main/AndroidManifest.xml	(date 1664502682481)
+@@ -15,7 +15,10 @@
+         android:supportsRtl="true"
+         android:theme="@style/Theme.WebRtcDemo">
+         <activity
+-            android:name=".CameraActivity"
++            android:name=".activity.CameraActivity"
++            android:exported="false" />
++        <activity
++            android:name=".activity.PeerLocalActivity"
+             android:exported="false" />
+         <activity
+             android:name=".MainActivity"
+Index: app/src/main/java/com/zhengsr/webrtcdemo/SdpObserver.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/zhengsr/webrtcdemo/SdpObserver.kt b/app/src/main/java/com/zhengsr/webrtcdemo/SdpObserver.kt
+new file mode 100644
+--- /dev/null	(date 1664507223260)
++++ b/app/src/main/java/com/zhengsr/webrtcdemo/SdpObserver.kt	(date 1664507223260)
+@@ -0,0 +1,32 @@
++package com.zhengsr.webrtcdemo
++
++import android.util.Log
++import org.webrtc.PeerConnection
++import org.webrtc.SdpObserver
++import org.webrtc.SessionDescription
++
++/**
++ * @author by zhengshaorui 2022/9/30
++ * describe：
++ */
++open class SdpObserver(val msg:String) : SdpObserver {
++    private  val TAG = "SdpObserver"
++    init {
++        Log.d(TAG, msg)
++    }
++    override fun onCreateSuccess(p0: SessionDescription?) {
++       
++    }
++
++    override fun onSetSuccess() {
++       
++    }
++
++    override fun onCreateFailure(p0: String?) {
++       
++    }
++
++    override fun onSetFailure(p0: String?) {
++       
++    }
++}
+\ No newline at end of file
+Index: app/src/main/java/com/zhengsr/webrtcdemo/PeerObserver.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/zhengsr/webrtcdemo/PeerObserver.kt b/app/src/main/java/com/zhengsr/webrtcdemo/PeerObserver.kt
+new file mode 100644
+--- /dev/null	(date 1664504783867)
++++ b/app/src/main/java/com/zhengsr/webrtcdemo/PeerObserver.kt	(date 1664504783867)
+@@ -0,0 +1,42 @@
++package com.zhengsr.webrtcdemo
++
++import org.webrtc.*
++
++/**
++ * @author by zhengshaorui 2022/9/30
++ * describe：
++ */
++open class PeerObserver : PeerConnection.Observer {
++    override fun onSignalingChange(p0: PeerConnection.SignalingState?) {
++    }
++
++    override fun onIceConnectionChange(p0: PeerConnection.IceConnectionState?) {
++    }
++
++    override fun onIceConnectionReceivingChange(p0: Boolean) {
++    }
++
++    override fun onIceGatheringChange(p0: PeerConnection.IceGatheringState?) {
++    }
++
++    override fun onIceCandidate(p0: IceCandidate?) {
++    }
++
++    override fun onIceCandidatesRemoved(p0: Array<out IceCandidate>?) {
++    }
++
++    override fun onAddStream(p0: MediaStream?) {
++    }
++
++    override fun onRemoveStream(p0: MediaStream?) {
++    }
++
++    override fun onDataChannel(p0: DataChannel?) {
++    }
++
++    override fun onRenegotiationNeeded() {
++    }
++
++    override fun onAddTrack(p0: RtpReceiver?, p1: Array<out MediaStream>?) {
++    }
++}
+\ No newline at end of file

@@ -1,9 +1,10 @@
-package com.zhengsr.webrtcdemo
+package com.zhengsr.webrtcdemo.activity
 
 import android.os.Bundle
 import android.util.Log
 import android.view.SurfaceHolder
 import androidx.appcompat.app.AppCompatActivity
+import com.zhengsr.webrtcdemo.R
 import kotlinx.android.synthetic.main.activity_camera.*
 import org.webrtc.*
 
@@ -58,7 +59,7 @@ class CameraActivity : AppCompatActivity() {
 
                     //添加视频轨道
                     val videoTrack =
-                        peerConnectionFactory.createVideoTrack(AUDIO_TRACK_ID, videoSource)
+                        peerConnectionFactory.createVideoTrack(VIDEO_TRACK_ID, videoSource)
 
                     // 添加渲染接收端器到轨道中，画面开始呈现
                     videoTrack.addSink(viewRender)

@@ -6,6 +6,8 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.zhengsr.webrtcdemo.activity.CameraActivity
+import com.zhengsr.webrtcdemo.activity.PeerLocalActivity
 import io.socket.client.IO
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
@@ -31,11 +33,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun camera(view: View) {
-        startActivity(Intent(this,CameraActivity::class.java))
+        startActivity(Intent(this, CameraActivity::class.java))
     }
 
     fun peercamera(view: View) {
-        //startActivity(Intent(this,PeerLocalActivity::class.java))
+        startActivity(Intent(this, PeerLocalActivity::class.java))
     }
 
 
